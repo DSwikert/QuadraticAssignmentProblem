@@ -12,18 +12,25 @@ public class Main {
 		// TODO Auto-generated method stub
 		QuadradicAssignment tst = new QuadradicAssignment();
 		String filename = "filename";
-		tst.generateRandomQAPFile(12, 10, filename);
+//public void generateRandomQAPFile(int N, int range,String pathname)
+		//tst.generateRandomQAPFile(20, 30, filename);
 		tst.readData(filename);
-		tst.solveBruteForce();
-		System.out.println(tst.getMinDistance());
-		int[] finalperm = tst.getMinPath();
-		for(int i = 0; i < 12;i++)
-		{
-			System.out.print(finalperm[i] + " ");
-		}
+		
+		long start = System.currentTimeMillis();
+//public void solveGeneticAlgorithm(int popSize,double percent,int generationCount)
+		tst.solveGeneticAlgorithm(1000,.5,1000);
+		//tst.solveBruteForce();
+		//System.out.println(tst.getMinDistance());
+		long end = System.currentTimeMillis();
+		System.out.println((end - start)/1000);
+        System.out.println("Done.");
+		//int[] finalperm = tst.getMinPath();
+		//for(int i = 0; i < 12;i++)
+		//{
+		//	System.out.print(finalperm[i] + " ");
+		//}
 		
 	}
 
-	
 
 }

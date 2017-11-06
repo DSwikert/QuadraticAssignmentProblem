@@ -7,7 +7,23 @@ import java.util.Random;
 import java.util.Scanner;
 
 
+
 public class QuadradicAssignment {
+	
+	/*public static void main(String[] args)
+	{
+		int[] t = {1,2,3,4,5};
+		for(int i = 0; i < 10;i++)
+		{
+			if(isIn(t,i,5) == true)
+			{
+				System.out.println(i+" is in t");
+			}
+			else
+				System.out.println(i+" is not in t");
+		}
+	}*/
+	
 	//Declare
 	private int iN;
 	private int mDistance[][];
@@ -26,6 +42,7 @@ public class QuadradicAssignment {
 		aStartingList = new int[iN];
 		aMinPermutation = new int[iN];
 		System.out.println(iN);
+		
 	}
 	//Read a txt file in specified format
 	public void readData(String sFilename) throws FileNotFoundException
@@ -37,24 +54,22 @@ public class QuadradicAssignment {
 		{
 			if(iLineNum == 1)
 			{
-				String[] asLine = (scan.nextLine()).split(" ");
-				int count = Integer.parseInt(asLine[0]);
+				
+				int count = scan.nextInt();
 				init(count);
 			}
 			else if(iLineNum > 2 && iLineNum < iN + 3)
 			{
-				String[] asLine = (scan.nextLine()).split("  ");
 				for(int i = 0; i < iN;i++)
 				{
-					mDistance[iLineNum - 3][i] = Integer.parseInt(asLine[i]);
+					mDistance[iLineNum - 3][i] = scan.nextInt();
 				}
 			}
-			else if(iLineNum > iN + 3)
+			else if(iLineNum > iN + 3 && iLineNum < (4 + (iN * 2)))
 			{
-				String[] asLine = (scan.nextLine()).split("  ");
 				for(int i = 0; i < iN;i++)
 				{
-					mFlow[iLineNum - (iN + 4)][i] = Integer.parseInt(asLine[i]);
+					mFlow[iLineNum - (iN + 4)][i] = scan.nextInt();
 				}
 			}
 			else
@@ -62,6 +77,7 @@ public class QuadradicAssignment {
 			iLineNum += 1;
 				
 		}
+		
 	}
 	
 
@@ -84,7 +100,7 @@ public class QuadradicAssignment {
 		{
 			for(int j = 0; j < iN;j++)
 			{
-				iDistance += mDistance[i][j] * mFlow[list[i]][list[j]]; 
+				iDistance += mDistance[i][j] * mFlow[list[i] - 1][list[j] - 1]; 
 			}
 		}
 		
@@ -187,9 +203,9 @@ public class QuadradicAssignment {
 	private void initBruteForce()
 	{
 		//Set starting list to be ordered permutation
-		for(int i = 0;i < iN;i++)
+		for(int i = 1;i < iN + 1;i++)
 		{
-			aStartingList[i] = i;
+			aStartingList[i - 1] = i;
 		}
 		//Set min distance as starting distance
 		iMinDistance = getDistance(aStartingList);
@@ -245,23 +261,180 @@ public class QuadradicAssignment {
 //Solving GA Functions
 	int iPopulationSize;
 	int[][] mPopulation;
+	double[] aWheel;
+	int iParentCount;
+	int[] aParents;
+	int[][] mChildren;
 	
-	private void initGeneticAlgorithm(int popSize)
+	
+	private void initGeneticAlgorithm(int popSize, double percent)
 	{
 		iPopulationSize = popSize;
+		iParentCount = (int)(percent * iPopulationSize);
+		if(iParentCount % 2 != 0)
+			iParentCount += 1;
+		aParents = new int[iParentCount];
+		aWheel = new double[iPopulationSize + 1];
 		mPopulation = new int[iPopulationSize][iN];
-		for(int i = 0;i < iN;i++)
+		mChildren = new int[iParentCount][iN];
+		for(int i = 1;i < iN + 1;i++)
 		{
-			aStartingList[i] = i;
+			aStartingList[i - 1] = i;
 		}
 	}
 	
-	public void solveGeneticAlgorithm(int popSize)
+	public void solveGeneticAlgorithm(int popSize,double percent,int generationCount)
 	{
-		initGeneticAlgorithm(popSize);
+		initGeneticAlgorithm(popSize,percent);
 		setPopulation();
+		System.out.println("Parent Count: "+iParentCount);
+		//System.out.println("Distance of lowest: "+getDistance(mPopulation[0]));
+		//printPop();
+		int minDis;
+		int maxDis;
+		for(int i = 0; i < generationCount;i++)
+		{
+			sortPopulation(mPopulation,0,iPopulationSize - 1);
+			minDis = getDistance(mPopulation[0]);
+			maxDis = getDistance(mPopulation[iPopulationSize - 1]);
+			if(i%100 == 0)
+			{
+				System.out.println("Distance of lowest: "+minDis);
+				System.out.println("Distance of Highest: "+maxDis);
+			}
+			if(minDis == maxDis)
+			{
+				System.out.println("Distance of lowest: "+minDis);
+				System.out.println("Distance of Highest: "+maxDis);
+				printArray(mPopulation[0],iN);
+				break;
+			}
+			//System.out.println(getDistance(mPopulation[0]));
+			//printPop();
+			setRouletteWheel();
+			getParents();
+			reproduction();
+			
+		}
 	}
 	
+	public void printPop()
+	{
+		for(int j = 0; j < iPopulationSize; j++)
+		{
+			for(int k = 0; k < iN; k++)
+			{
+				System.out.print(mPopulation[j][k] + " ");
+			}
+			System.out.println("");
+		}
+		System.out.println("");
+	}
+	
+	public void printArray(int[] arr, int arrSize)
+	{
+		for(int i = 0; i < arrSize; i++)
+		{
+			System.out.print(arr[i] + " ");
+		}
+		System.out.println("");
+	}
+	private void reproduction()
+	{
+		for(int i = 0; i < iParentCount;i += 2)
+		{
+			//child1 = mChildren[i];
+			//child2 = mChildren[i+1];
+			int[] child1 = new int[iN];
+			int[] child2 = new int[iN];
+			Random rand = new Random();
+			int index = rand.nextInt(iN);
+			for(int j = 0;j <= index;j++)
+			{	
+				child1[j] = mPopulation[aParents[i]][j];
+				child2[j] = mPopulation[aParents[i+1]][j];
+			}
+			int firstCount = index + 1;
+			int firstIndex = index + 1;
+			int secondCount = index + 1;
+			int secondIndex = index + 1;
+			while(firstCount != iN && firstIndex < ((iN*2) - 1))
+			{
+				if(firstIndex < iN)
+				{
+					int f = mPopulation[aParents[i+1]][firstIndex];
+					if(isIn(child1,f) == false)
+					{
+						child1[firstCount] = f;
+						firstCount++;
+					}
+				}
+				else
+				{
+					int f = mPopulation[aParents[i+1]][firstIndex - iN];
+					if(isIn(child1,f) == false)
+					{
+						child1[firstCount] = f;
+						firstCount++;
+					}
+				}
+				firstIndex++;
+			}
+			while(secondCount != iN && secondIndex < ((iN*2) - 1))
+			{
+				if(secondIndex < iN)
+				{
+					int f = mPopulation[aParents[i]][secondIndex];
+					if(isIn(child2,f) == false)
+					{
+						child2[secondCount] = f;
+						secondCount++;
+					}
+				}
+				else
+				{
+					int f = mPopulation[aParents[i]][secondIndex - iN];
+					if(isIn(child2,f) == false)
+					{
+						child2[secondCount] = f;
+						secondCount++;
+					}
+				}
+				secondIndex++;
+			}
+				
+				
+			mChildren[i] = child1;
+			mChildren[i+1] = child2;
+			
+		}
+		
+		for(int x = 0; x < iParentCount;x++)
+		{
+			//printArray(mChildren[x],iN);
+			//System.out.println("Population Index: "+((iPopulationSize - 1) - x));
+			for(int x1 = 0; x1 < iN; x1++)
+			{
+				mPopulation[(iPopulationSize - 1) - x][x1] = mChildren[x][x1];
+			}
+			//mPopulation[(iParentCount - 1) - x] = mChildren[x];
+			//printArray(mChildren[x],iN);
+			//System.out.println("Child " + x + " distance = " + getDistance(mChildren[x]));
+		}
+	}
+	
+	private boolean isIn(int[] list, int pt)
+	{
+		boolean isIn = false;
+		for(int i = 0; i < iN;i++)
+		{
+			if(list[i] == pt)
+			{
+				isIn = true;
+			}
+		}
+		return isIn;
+	}
 	
 	private void setPopulation()
 	{
@@ -289,13 +462,106 @@ public class QuadradicAssignment {
 	
 	private void setRouletteWheel()
 	{
-		int totalDistance = 0;
+		double totalDistance = 0;
 		for(int i = 0; i < iPopulationSize;i++)
 		{
 			totalDistance += getDistance(mPopulation[i]);
 		}
+		double secondDistance = 0;
+		aWheel[0] = 0;
+		for(int j = 0; j < iPopulationSize + 1;j++)
+		{
+			if(j == 0)
+				aWheel[j] = 0;
+			else
+			{
+				double dis = getDistance(mPopulation[(iPopulationSize) - j])/totalDistance;
+				aWheel[j] = dis + aWheel[j-1];
+			}
+			//System.out.println(aWheel[j]);
+		}
 	}
 	
+	
+	private void getParents()
+	{
+		
+		Random rand = new Random();
+		for(int i = 0; i < iParentCount;i++)
+		{
+			
+			double dProbability = rand.nextDouble();
+			for(int j = 0; j < iPopulationSize; j++)
+			{
+				if(dProbability > aWheel[j] && dProbability < aWheel[j + 1])
+				{
+					aParents[i] = j;
+					//System.out.println("Parent: "+aParents[i]+"rand: " + dProbability +", Between: "+aWheel[j]+" - "+aWheel[j + 1]);
+				}
+			}
+		
+		}
+	}
+	
+	
+	//Merge Sort
+		public void sortPopulation(int[][] pop, int l, int h)
+		{
+			int middle_index;
+			if(l < h)
+			{
+				middle_index = (l+h)/2;
+				sortPopulation(pop,l, middle_index);
+				sortPopulation(pop,middle_index+1,h);
+				merge(pop,l,middle_index,h);
+			}
+		}
+		
+		private void merge(int[][] pop, int lo, int middle, int h)
+		{
+			int size1 = (middle - lo) + 1;
+			int size2 = h - middle;
+			
+			int[][] p1 = new int[size1][iN];
+			int[][] p2 = new int[size2][iN];
+			
+			for(int x = 0;x <size1;x++)
+				p1[x] = pop[lo+x];
+			for(int y = 0; y < size2;y++)
+				p2[y] = pop[middle+1 + y];
+			
+			
+			int i = 0;
+			int j = 0;
+			int hld = lo;
+			while(i < size1 && j < size2)
+			{
+				if(getDistance(p1[i]) <= getDistance(p2[j]))
+				{
+					pop[hld] = p1[i];
+					i++;
+				}
+				else
+				{
+					pop[hld] = p2[j];
+					j++;
+				}
+				hld++;
+			}
+			while(i < size1)
+			{
+				pop[hld] = p1[i];
+				hld++;
+				i++;
+			}
+			while(j < size2)
+			{
+				pop[hld] = p2[j];
+				hld++;
+				j++;
+			}
+			
+		}
 	
 	
 	
