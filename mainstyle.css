@@ -23,7 +23,7 @@ nav p a {
 }
 
 
-
+/* Body Section */
 
 body {
   background: #0A2239;
@@ -46,6 +46,8 @@ body {
   display: inline-block;
 }
 
+
+/* Change link colour */
 a:link, a:visited {
   color: #132E32;
 }
