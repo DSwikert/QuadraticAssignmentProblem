@@ -9,21 +9,6 @@ import java.util.Scanner;
 
 
 public class QuadradicAssignment {
-	
-	/*public static void main(String[] args)
-	{
-		int[] t = {1,2,3,4,5};
-		for(int i = 0; i < 10;i++)
-		{
-			if(isIn(t,i,5) == true)
-			{
-				System.out.println(i+" is in t");
-			}
-			else
-				System.out.println(i+" is not in t");
-		}
-	}*/
-	
 	//Declare
 	private int iN;
 	private int mDistance[][];
@@ -41,7 +26,7 @@ public class QuadradicAssignment {
 		mFlow = new int[iN][iN];
 		aStartingList = new int[iN];
 		aMinPermutation = new int[iN];
-		System.out.println(iN);
+		//System.out.println(iN);
 		
 	}
 	//Read a txt file in specified format
@@ -82,6 +67,28 @@ public class QuadradicAssignment {
 	
 
 //Utility Functions (i.e. getters/setters/print)
+	
+	private boolean isIn(int[] list, int pt)
+	{
+		boolean isIn = false;
+		for(int i = 0; i < iN;i++)
+		{
+			if(list[i] == pt)
+			{
+				isIn = true;
+			}
+		}
+		return isIn;
+	}
+	
+	private void printArray(int[] arr, int arrSize)
+	{
+		for(int i = 0; i < arrSize; i++)
+		{
+			System.out.print(arr[i] + " ");
+		}
+		System.out.println("");
+	}
 	
 	public int[] getMinPath()
 	{
@@ -288,8 +295,6 @@ public class QuadradicAssignment {
 		initGeneticAlgorithm(popSize,percent);
 		setPopulation();
 		System.out.println("Parent Count: "+iParentCount);
-		//System.out.println("Distance of lowest: "+getDistance(mPopulation[0]));
-		//printPop();
 		int minDis;
 		int maxDis;
 		for(int i = 0; i < generationCount;i++)
@@ -306,11 +311,12 @@ public class QuadradicAssignment {
 			{
 				System.out.println("Distance of lowest: "+minDis);
 				System.out.println("Distance of Highest: "+maxDis);
-				printArray(mPopulation[0],iN);
+				iMinDistance = minDis;
+				for(int j = 0; j < iN; j++)
+					aMinPermutation[j] = mPopulation[0][j];
+				printArray(aMinPermutation,iN);
 				break;
 			}
-			//System.out.println(getDistance(mPopulation[0]));
-			//printPop();
 			setRouletteWheel();
 			getParents();
 			reproduction();
@@ -318,7 +324,29 @@ public class QuadradicAssignment {
 		}
 	}
 	
-	public void printPop()
+	public static int[][] createGeneticCrowd(QuadradicAssignment QAP,int runSize, double crowdPercentage,int N)
+	{
+		int QAPCrowdSize = (int)(crowdPercentage * runSize);
+		int[][] QAPCrowd = new int[QAPCrowdSize][N];
+		int[][] run = new int[runSize][N];
+		for(int i = 0; i < runSize; i++)
+		{
+			QAP.solveGeneticAlgorithm(1000,.5,1000);
+			int[] tmp = new int[N];
+			tmp = QAP.getMinPath();
+			for(int k = 0;k < N; k++)
+				run[i][k] = tmp[k];
+		}
+		QAP.sortPopulation(run, 0, runSize - 1);
+		for(int j = 0; j < QAPCrowdSize; j++)
+		{
+			QAPCrowd[j] = run[j];
+		}
+		return QAPCrowd;
+		
+	}
+	
+	private void printPop()
 	{
 		for(int j = 0; j < iPopulationSize; j++)
 		{
@@ -327,15 +355,6 @@ public class QuadradicAssignment {
 				System.out.print(mPopulation[j][k] + " ");
 			}
 			System.out.println("");
-		}
-		System.out.println("");
-	}
-	
-	public void printArray(int[] arr, int arrSize)
-	{
-		for(int i = 0; i < arrSize; i++)
-		{
-			System.out.print(arr[i] + " ");
 		}
 		System.out.println("");
 	}
@@ -411,29 +430,11 @@ public class QuadradicAssignment {
 		
 		for(int x = 0; x < iParentCount;x++)
 		{
-			//printArray(mChildren[x],iN);
-			//System.out.println("Population Index: "+((iPopulationSize - 1) - x));
 			for(int x1 = 0; x1 < iN; x1++)
 			{
 				mPopulation[(iPopulationSize - 1) - x][x1] = mChildren[x][x1];
 			}
-			//mPopulation[(iParentCount - 1) - x] = mChildren[x];
-			//printArray(mChildren[x],iN);
-			//System.out.println("Child " + x + " distance = " + getDistance(mChildren[x]));
 		}
-	}
-	
-	private boolean isIn(int[] list, int pt)
-	{
-		boolean isIn = false;
-		for(int i = 0; i < iN;i++)
-		{
-			if(list[i] == pt)
-			{
-				isIn = true;
-			}
-		}
-		return isIn;
 	}
 	
 	private void setPopulation()
@@ -444,7 +445,7 @@ public class QuadradicAssignment {
 		}
 	}
 	
-	private int[] randomPermutation(int[] org)
+	public int[] randomPermutation(int[] org)
 	{
 		int[] temp = new int[iN];
 		for(int i = 0; i < iN; i++)
@@ -467,7 +468,6 @@ public class QuadradicAssignment {
 		{
 			totalDistance += getDistance(mPopulation[i]);
 		}
-		double secondDistance = 0;
 		aWheel[0] = 0;
 		for(int j = 0; j < iPopulationSize + 1;j++)
 		{
@@ -478,7 +478,6 @@ public class QuadradicAssignment {
 				double dis = getDistance(mPopulation[(iPopulationSize) - j])/totalDistance;
 				aWheel[j] = dis + aWheel[j-1];
 			}
-			//System.out.println(aWheel[j]);
 		}
 	}
 	
@@ -496,7 +495,6 @@ public class QuadradicAssignment {
 				if(dProbability > aWheel[j] && dProbability < aWheel[j + 1])
 				{
 					aParents[i] = j;
-					//System.out.println("Parent: "+aParents[i]+"rand: " + dProbability +", Between: "+aWheel[j]+" - "+aWheel[j + 1]);
 				}
 			}
 		
@@ -564,6 +562,75 @@ public class QuadradicAssignment {
 		}
 	
 	
+//Wisdom of the Crowds
+	private int[][] wisdomChart;
+	private int crowdSize;
+	int[] WOC;
+	
+	private void initWOC(int crowdsize)
+	{
+		wisdomChart = new int[iN][iN];
+		crowdSize = crowdsize;
+		WOC = new int[iN];
+	}
+	public void solveWisdomOfTheCrowds(int[][] crowd,int crowdsize)
+	{
+		initWOC(crowdsize);
+		setWisdom(crowd);
+		
+		for(int x = 0; x < iN;x++)
+		{
+			for(int y = 0; y < iN; y++)
+			{
+				System.out.print(wisdomChart[x][y] + " ");
+			}
+			System.out.println("");
+		}
+		
+		fillWOC();
+		
+		aMinPermutation = WOC;
+		iMinDistance = getDistance(WOC);
+	}
+	private void fillWOC()
+	{
+		for(int i = 0; i < iN;i++)
+		{
+			//System.out.println("Index: "+i+" Max: "+getMax(i));
+			WOC[i] = getMax(i);
+			
+		}
+	}
+	private int getMax(int index)
+	{
+		int maxInIndex = 0;
+		int maxValue = 0;
+		for(int i = 0; i < iN;i++)
+		{
+			int tmp = wisdomChart[index][i];
+			if(tmp > maxValue)
+			{
+				if(isIn(WOC,(i + 1)) == false)
+				{
+					maxValue = tmp;
+					maxInIndex = i;
+					System.out.println("Index: "+index+" Max: "+maxInIndex);
+				}
+			}
+		}
+		
+		return maxInIndex + 1;
+	}
 	
 	
+	private void setWisdom(int[][] crowd)
+	{	
+		for(int i = 0; i < crowdSize;i++)
+		{
+			for(int j = 0; j < iN; j++)
+			{
+				wisdomChart[j][crowd[i][j] - 1] += 1;
+			}
+		}
+	}
 }
