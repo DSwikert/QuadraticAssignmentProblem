@@ -17,7 +17,6 @@ public class Main {
 		System.out.println("Starting...");
 		QuadradicAssignment QAP = new QuadradicAssignment();
 		String filename = "C:\\Users\\Daniel\\OneDrive\\Documents\\Fall 2017-DESKTOP-8KU0N3M\\AI\\Final Project\\Had12.txt";
-		int iN = 12;
 		//QAP.generateRandomQAPFile(20, 30, filename);
 		QAP.readData(filename);
 		
@@ -33,7 +32,6 @@ public class Main {
 		
 //Wisdom Of The Crowds/GA
 		int GARunSize = 10;
-		//int[][] crowd = new int[crowdSize][iN];
 		int lowestGA = Integer.MAX_VALUE;
 		int totalGA = 0;
 		
@@ -41,24 +39,18 @@ public class Main {
 		for(int i = 0; i < GARunSize; i++)
 		{
 			QAP.solveGeneticAlgorithm(5000,.8,1000,true);
-			//int[] tmp = QAP.getMinPath();
 			int tempDis = QAP.getMinDistance();
 			totalGA += tempDis;
 			if(lowestGA > tempDis)
 				lowestGA = tempDis;
 		}
 		long end = System.currentTimeMillis();
-	//Solve WOC
-		//QAP.solveWisdomOfTheCrowds(crowd, crowdSize,.0);
+	
+		
 	//Print Results
+		System.out.println("\n\n\n Results");
 		System.out.println("Minimum GA Distance: " + lowestGA);
 		System.out.println("Average GA Distance: " + totalGA/GARunSize);
-		//System.out.println("WOC Distance: "+ QAP.getMinDistance());
-		//int[] lowerPerm = QAP.getMinPath();
-		//for(int j = 0; j < iN; j++)
-		//{
-		//	System.out.print(lowerPerm[j] + " ");
-		//}
 		System.out.println("");
 		System.out.println("Average Time: "+((end - start))/GARunSize);
 		
