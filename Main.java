@@ -16,8 +16,8 @@ public class Main {
 //Initialization 
 		System.out.println("Starting...");
 		QuadradicAssignment QAP = new QuadradicAssignment();
-		String filename = "C:\\Users\\Daniel\\OneDrive\\Documents\\Fall 2017-DESKTOP-8KU0N3M\\AI\\Final Project\\Had12.txt";
-		int iN = 12;
+		String filename = "C:\\Users\\Daniel\\OneDrive\\Documents\\Fall 2017-DESKTOP-8KU0N3M\\AI\\Final Project\\esc128.txt";
+		int iN = 128;
 		//QAP.generateRandomQAPFile(20, 30, filename);
 		QAP.readData(filename);
 		
@@ -40,7 +40,7 @@ public class Main {
 	//Fill Crowd
 		for(int i = 0; i < crowdSize; i++)
 		{
-			QAP.solveGeneticAlgorithm(5000,.8,10000);
+			QAP.solveGeneticAlgorithm(1000,.8,1000);
 			int[] tmp = QAP.getMinPath();
 			int tempDis = QAP.getMinDistance();
 			totalGA += tempDis;

@@ -295,7 +295,7 @@ public class QuadradicAssignment {
 	{
 		initGeneticAlgorithm(popSize,percent);
 		setPopulation();
-		//System.out.println("Parent Count: "+iParentCount);
+		System.out.println("Parent Count: "+iParentCount);
 		int minDis;
 		int maxDis;
 		for(int i = 0; i < generationCount;i++)
