@@ -16,8 +16,8 @@ public class Main {
 //Initialization 
 		System.out.println("Starting...");
 		QuadradicAssignment QAP = new QuadradicAssignment();
-		String filename = "C:\\Users\\Daniel\\OneDrive\\Documents\\Fall 2017-DESKTOP-8KU0N3M\\AI\\Final Project\\esc128.txt";
-		int iN = 128;
+		String filename = "C:\\Users\\Daniel\\OneDrive\\Documents\\Fall 2017-DESKTOP-8KU0N3M\\AI\\Final Project\\Had12.txt";
+		int iN = 12;
 		//QAP.generateRandomQAPFile(20, 30, filename);
 		QAP.readData(filename);
 		
@@ -32,37 +32,35 @@ public class Main {
 		//System.out.println(tst.getMinDistance());
 		
 //Wisdom Of The Crowds/GA
-		int crowdSize = 10;
-		int[][] crowd = new int[crowdSize][iN];
+		int GARunSize = 10;
+		//int[][] crowd = new int[crowdSize][iN];
 		int lowestGA = Integer.MAX_VALUE;
 		int totalGA = 0;
 		
 	//Fill Crowd
-		for(int i = 0; i < crowdSize; i++)
+		for(int i = 0; i < GARunSize; i++)
 		{
-			QAP.solveGeneticAlgorithm(1000,.8,1000);
-			int[] tmp = QAP.getMinPath();
+			QAP.solveGeneticAlgorithm(5000,.8,1000,true);
+			//int[] tmp = QAP.getMinPath();
 			int tempDis = QAP.getMinDistance();
 			totalGA += tempDis;
 			if(lowestGA > tempDis)
 				lowestGA = tempDis;
-			for(int k = 0;k < iN; k++)
-				crowd[i][k] = tmp[k];
 		}
 		long end = System.currentTimeMillis();
 	//Solve WOC
-		QAP.solveWisdomOfTheCrowds(crowd, crowdSize,.0);
+		//QAP.solveWisdomOfTheCrowds(crowd, crowdSize,.0);
 	//Print Results
 		System.out.println("Minimum GA Distance: " + lowestGA);
-		System.out.println("Average GA Distance: " + totalGA/crowdSize);
-		System.out.println("WOC Distance: "+ QAP.getMinDistance());
-		int[] lowerPerm = QAP.getMinPath();
-		for(int j = 0; j < iN; j++)
-		{
-			System.out.print(lowerPerm[j] + " ");
-		}
+		System.out.println("Average GA Distance: " + totalGA/GARunSize);
+		//System.out.println("WOC Distance: "+ QAP.getMinDistance());
+		//int[] lowerPerm = QAP.getMinPath();
+		//for(int j = 0; j < iN; j++)
+		//{
+		//	System.out.print(lowerPerm[j] + " ");
+		//}
 		System.out.println("");
-		System.out.println("Average Time: "+((end - start))/crowdSize);
+		System.out.println("Average Time: "+((end - start))/GARunSize);
 		
 	}
 

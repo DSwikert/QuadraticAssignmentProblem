@@ -89,7 +89,7 @@ public class QuadradicAssignment {
 		return isIn;
 	}
 	
-	private void printArray(int[] arr, int arrSize)
+	public void printArray(int[] arr, int arrSize)
 	{
 		for(int i = 0; i < arrSize; i++)
 		{
@@ -115,6 +115,14 @@ public class QuadradicAssignment {
 		{
 			for(int j = 0; j < iN;j++)
 			{
+				if(list[i] == 0 || list[j] == 0)
+				{
+					System.out.println("In Distance");
+					for(int k = 0; k < iN;k++)
+					{
+						System.out.print(list[k]+" ");
+					}
+				}
 				iDistance += mDistance[i][j] * mFlow[list[i] - 1][list[j] - 1]; 
 			}
 		}
@@ -291,11 +299,11 @@ public class QuadradicAssignment {
 		}
 	}
 	
-	public void solveGeneticAlgorithm(int popSize,double percent,int generationCount)
+	public void solveGeneticAlgorithm(int popSize,double percent,int generationCount, boolean WOC)
 	{
 		initGeneticAlgorithm(popSize,percent);
 		setPopulation();
-		System.out.println("Parent Count: "+iParentCount);
+		//System.out.println("Parent Count: "+iParentCount);
 		int minDis;
 		int maxDis;
 		for(int i = 0; i < generationCount;i++)
@@ -317,6 +325,10 @@ public class QuadradicAssignment {
 			setRouletteWheel();
 			getParents();
 			reproduction();
+			if(WOC == true)
+			{
+				geneticWOC();
+			}
 			
 		}
 	}
@@ -337,25 +349,21 @@ public class QuadradicAssignment {
 		}
 	}
 	
-	public static int[][] createGeneticCrowd(QuadradicAssignment QAP,int runSize, double crowdPercentage,int N)
+	public void geneticWOC()
 	{
-		int QAPCrowdSize = (int)(crowdPercentage * runSize);
-		int[][] QAPCrowd = new int[QAPCrowdSize][N];
-		int[][] run = new int[runSize][N];
-		for(int i = 0; i < runSize; i++)
+		int GACrowdSize = iPopulationSize - iParentCount;
+		int[][] GACrowd = new int[GACrowdSize][iN];
+		for(int i = 0 ; i < GACrowdSize;i++)
 		{
-			QAP.solveGeneticAlgorithm(1000,.5,1000);
-			int[] tmp = new int[N];
-			tmp = QAP.getMinPath();
-			for(int k = 0;k < N; k++)
-				run[i][k] = tmp[k];
+			GACrowd[i] = mPopulation[i];
 		}
-		QAP.sortPopulation(run, 0, runSize - 1);
-		for(int j = 0; j < QAPCrowdSize; j++)
+		int[] GAWOC = solveWisdomOfTheCrowds(GACrowd,GACrowdSize,0); 
+		for(int j = 0; j < iN;j++)
 		{
-			QAPCrowd[j] = run[j];
+			mPopulation[GACrowdSize - 1][j] = GAWOC[j];
+			//System.out.print(GAWOC[j] + " ");
 		}
-		return QAPCrowd;
+		//System.out.println("");
 		
 	}
 	
@@ -576,71 +584,46 @@ public class QuadradicAssignment {
 	
 	
 //Wisdom of the Crowds
-	private int[][] wisdomChart;
-	private int crowdSize;
-	private int expertSize;
-	private int[] WOC;
 	
-	private void initWOC(int crowdsize,double expertPercent)
+	
+	public int[] solveWisdomOfTheCrowds(int[][] crowd,int crowdsize, double expertPercent)
 	{
-		wisdomChart = new int[iN][iN];
-		crowdSize = crowdsize;
-		expertSize = (int)(expertPercent * crowdSize);
-		WOC = new int[iN];
-	}
-	public void solveWisdomOfTheCrowds(int[][] crowd,int crowdsize, double expertPercent)
-	{
-		initWOC(crowdsize, expertPercent);
+		int[][] wisdomChart = new int[iN][iN];
+		int crowdSize = crowdsize;
+		int expertSize = (int)(expertPercent * crowdSize);
 		sortPopulation(crowd,0,crowdsize - 1);
-		setWisdom(crowd);
 		
-		
-		for(int x = 0; x < iN;x++)
-		{
-			for(int y = 0; y < iN; y++)
-			{
-				System.out.print(wisdomChart[x][y] + " ");
-			}
-			System.out.println("");
-		}
-		fillWOC(crowd);
-		
-		aMinPermutation = WOC;
-		iMinDistance = getDistance(WOC);
+		return setWisdom(crowd, crowdSize, wisdomChart, expertSize);
 	}
-	private void fillWOC(int[][] crowd)
+	private int[] fillWOC(int[][] crowd,int[][] wisdomChart)
 	{
-		//WOC[0] = crowd[0][0];
-		for(int i = 0; i < iN;i++)
+		int[] WOC = new int[iN];
+		for(int index = 0; index < iN;index++)
 		{
-			//System.out.println("Index: "+i+" Max: "+getMax(i));
-			WOC[i] = getMax(i);
-			
-		}
-	}
-	private int getMax(int index)
-	{
-		int maxInIndex = 0;
-		int maxValue = 0;
-		for(int i = 0; i < iN;i++)
-		{
-			int tmp = wisdomChart[index][i];
-			if(tmp > maxValue)
+			int maxInIndex = 0;
+			int maxValue = 0;
+			for(int i = 0; i < iN;i++)
 			{
-				if(isIn(WOC,(i + 1)) == false)
+				int tmp = wisdomChart[index][i];
+				if(tmp >= maxValue)
 				{
-					maxValue = tmp;
-					maxInIndex = i;
-					System.out.println("Index: "+index+" Max: "+maxInIndex);
+					if(isIn(WOC,(i + 1)) == false)
+					{
+						maxValue = tmp;
+						maxInIndex = i;
+						//System.out.println("Index: "+index+" Max: "+maxInIndex);
+					}
 				}
 			}
+			
+			WOC[index] = maxInIndex + 1;
+			
 		}
-		
-		return maxInIndex + 1;
+		return WOC;
 	}
 	
 	
-	private void setWisdom(int[][] crowd)
+	private int[] setWisdom(int[][] crowd,int crowdSize, int[][] wisdomChart, int expertSize)
 	{	
 		for(int k = 0; k < expertSize;k++)
 		{
@@ -660,5 +643,8 @@ public class QuadradicAssignment {
 				wisdomChart[j][(crowd[i][j] - 1)] += 1;
 			}
 		}
+		
+		return fillWOC(crowd, wisdomChart);
 	}
+	
 }
