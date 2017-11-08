@@ -68,6 +68,14 @@ public class QuadradicAssignment {
 
 //Utility Functions (i.e. getters/setters/print)
 	
+	//Swap two integers in an array
+	private void swap(int[] permutation,int i, int j)
+	{
+		int temp = permutation[i];
+		permutation[i] = permutation[j];
+		permutation[j] = temp;
+	}
+	
 	private boolean isIn(int[] list, int pt)
 	{
 		boolean isIn = false;
@@ -255,13 +263,6 @@ public class QuadradicAssignment {
 				}
 			}
 	}
-	//Swap two integers in an array
-	private void swap(int[] permutation,int i, int j)
-	{
-		int temp = permutation[i];
-		permutation[i] = permutation[j];
-		permutation[j] = temp;
-	}
 	
 	
 	
@@ -300,17 +301,13 @@ public class QuadradicAssignment {
 		for(int i = 0; i < generationCount;i++)
 		{
 			sortPopulation(mPopulation,0,iPopulationSize - 1);
+			mutation();
 			minDis = getDistance(mPopulation[0]);
 			maxDis = getDistance(mPopulation[iPopulationSize - 1]);
-			if(i%100 == 0)
-			{
-				//System.out.println("Distance of lowest: "+minDis);
-				//System.out.println("Distance of Highest: "+maxDis);
-			}
 			if(minDis == maxDis || i == (generationCount - 1))
 			{
-				//System.out.println("Distance of lowest: "+minDis);
-				//System.out.println("Distance of Highest: "+maxDis);
+				System.out.println("Distance of lowest: "+minDis);
+				System.out.println("Distance of Highest: "+maxDis);
 				iMinDistance = minDis;
 				for(int j = 0; j < iN; j++)
 					aMinPermutation[j] = mPopulation[0][j];
@@ -320,6 +317,22 @@ public class QuadradicAssignment {
 			setRouletteWheel();
 			getParents();
 			reproduction();
+			
+		}
+	}
+	
+	
+	private void mutation()
+	{
+		Random rand = new Random();
+		int mutation = rand.nextInt(10);
+		if(mutation == 1)
+		{
+			int mutPerm = rand.nextInt(iPopulationSize);
+			int index1 = rand.nextInt(iN);
+			int index2 = rand.nextInt(iN);
+			
+			swap(mPopulation[mutPerm],index1,index2);
 			
 		}
 	}
@@ -580,6 +593,7 @@ public class QuadradicAssignment {
 		initWOC(crowdsize, expertPercent);
 		sortPopulation(crowd,0,crowdsize - 1);
 		setWisdom(crowd);
+		
 		
 		for(int x = 0; x < iN;x++)
 		{

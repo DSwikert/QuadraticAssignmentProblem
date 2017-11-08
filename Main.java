@@ -6,14 +6,18 @@ import java.util.Scanner;
 
 public class Main {
 
-	
+//public void generateRandomQAPFile(int N, int range,String pathname)
+//public void solveGeneticAlgorithm(int popSize,double percent,int generationCount)
+//public void solveWisdomOfTheCrowds(int[][] crowd,int crowdsize,double expertPercent)
 	
 	public static void main(String[] args) throws FileNotFoundException {
 		// TODO Auto-generated method stub
+
+//Initialization 
+		System.out.println("Starting...");
 		QuadradicAssignment QAP = new QuadradicAssignment();
-		String filename = "C:\\Users\\Daniel\\OneDrive\\Documents\\Fall 2017-DESKTOP-8KU0N3M\\AI\\Final Project\\had12.txt";
+		String filename = "C:\\Users\\Daniel\\OneDrive\\Documents\\Fall 2017-DESKTOP-8KU0N3M\\AI\\Final Project\\Had12.txt";
 		int iN = 12;
-//public void generateRandomQAPFile(int N, int range,String pathname)
 		//QAP.generateRandomQAPFile(20, 30, filename);
 		QAP.readData(filename);
 		
@@ -21,29 +25,22 @@ public class Main {
 //Start timer
 		long start = System.currentTimeMillis();
 
-//Genetic Algorithm
-//public void solveGeneticAlgorithm(int popSize,double percent,int generationCount)
-		//QAP.solveGeneticAlgorithm(1000,.5,1000);
 		
 		
 //Brute Force
-		
 		//QAP.solveBruteForce();
 		//System.out.println(tst.getMinDistance());
 		
-//Wisdom Of The Crowds
-//public void solveWisdomOfTheCrowds(int[][] crowd,int crowdsize)
-		int[] starting = {1,2,3,4,5,6,7,8,9,10,11,12};
-		int crowdSize = 100;
+//Wisdom Of The Crowds/GA
+		int crowdSize = 10;
 		int[][] crowd = new int[crowdSize][iN];
 		int lowestGA = Integer.MAX_VALUE;
 		int totalGA = 0;
 		
-		//crowd = QuadradicAssignment.createGeneticCrowd(QAP,20,.5,iN);
-		
+	//Fill Crowd
 		for(int i = 0; i < crowdSize; i++)
 		{
-			QAP.solveGeneticAlgorithm(1000,.5,1000);
+			QAP.solveGeneticAlgorithm(5000,.8,10000);
 			int[] tmp = QAP.getMinPath();
 			int tempDis = QAP.getMinDistance();
 			totalGA += tempDis;
@@ -52,9 +49,10 @@ public class Main {
 			for(int k = 0;k < iN; k++)
 				crowd[i][k] = tmp[k];
 		}
-		
-		
+		long end = System.currentTimeMillis();
+	//Solve WOC
 		QAP.solveWisdomOfTheCrowds(crowd, crowdSize,.0);
+	//Print Results
 		System.out.println("Minimum GA Distance: " + lowestGA);
 		System.out.println("Average GA Distance: " + totalGA/crowdSize);
 		System.out.println("WOC Distance: "+ QAP.getMinDistance());
@@ -64,13 +62,7 @@ public class Main {
 			System.out.print(lowerPerm[j] + " ");
 		}
 		System.out.println("");
-		
-		
-//Display timing results		
-		long end = System.currentTimeMillis();
-		System.out.println((end - start)/1000);
-        System.out.println("Done.");
-		
+		System.out.println("Average Time: "+((end - start))/crowdSize);
 		
 	}
 
