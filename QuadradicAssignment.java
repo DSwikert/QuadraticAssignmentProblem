@@ -6,6 +6,8 @@ import java.io.PrintWriter;
 import java.util.Random;
 import java.util.Scanner;
 
+import javax.swing.JFrame;
+
 
 
 public class QuadradicAssignment {
@@ -16,6 +18,7 @@ public class QuadradicAssignment {
 	private int iMinDistance;
 	private int[] aStartingList;
 	private int[] aMinPermutation;
+	private boolean[][] connected;
 	
 //Initialization Functions	
 	//Initialize members needed for solving
@@ -27,6 +30,7 @@ public class QuadradicAssignment {
 		aStartingList = new int[iN];
 		aMinPermutation = new int[iN];
 		//System.out.println(iN);
+		connected = new boolean[iN][iN];
 		
 	}
 	//Read a txt file in specified format
@@ -55,6 +59,10 @@ public class QuadradicAssignment {
 				for(int i = 0; i < iN;i++)
 				{
 					mFlow[iLineNum - (iN + 4)][i] = scan.nextInt();
+					if(mFlow[iLineNum - (iN + 4)][i] != 0)
+						connected[iLineNum - (iN + 4)][i] = true;
+					else
+						connected[iLineNum - (iN + 4)][i] = false;
 				}
 			}
 			else
@@ -67,6 +75,12 @@ public class QuadradicAssignment {
 	
 
 //Utility Functions (i.e. getters/setters/print)
+	
+	public int getN()
+	{
+		return iN;
+	}
+	
 	
 	//Swap two integers in an array
 	private void swap(int[] permutation,int i, int j)
@@ -645,6 +659,22 @@ public class QuadradicAssignment {
 		}
 		
 		return fillWOC(crowd, wisdomChart);
+	}
+	
+	
+	public void showAssignments(int[] Assignments)
+	{
+		JFrame frame = new JFrame();
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        
+     
+        GUI g = new GUI(Assignments,connected,iN);
+        frame.setContentPane(g);
+        frame.pack();
+        frame.setLocationRelativeTo(null);
+        frame.setResizable(false);
+        frame.setVisible(true);
+        frame.invalidate();
 	}
 	
 }
