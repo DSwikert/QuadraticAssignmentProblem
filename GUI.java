@@ -50,7 +50,7 @@ public class GUI extends JPanel{
 		super.paintComponent(g);
 		
 		Graphics2D g2 = (Graphics2D)g;
-		g2.setColor(Color.BLUE);
+		g2.setColor(Color.RED);
 		g2.setFont(new Font("TimesRoman", Font.BOLD, fontSize));
 		
 		g2.drawString("Location # (Facility #)", 0,40);

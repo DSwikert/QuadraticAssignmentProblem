@@ -21,7 +21,7 @@ public class Main {
 //Initialization 
 		System.out.println("Starting...");
 		QuadradicAssignment QAP = new QuadradicAssignment();
-		String filename = "C:\\Users\\Daniel\\OneDrive\\Documents\\Fall 2017-DESKTOP-8KU0N3M\\AI\\Final Project\\Data Files\\esc32h.txt";
+		String filename = "FileName";
 		//QAP.generateRandomQAPFile(20, 30, filename);
 		QAP.readData(filename);
 		
@@ -33,10 +33,10 @@ public class Main {
 		
 //Brute Force
 		//QAP.solveBruteForce();
-		//System.out.println(tst.getMinDistance());
+		//System.out.println(QAP.getMinDistance());
 		
 //Wisdom Of The Crowds/GA
-		int GARunSize = 1;
+		int GARunSize = 10;
 		int lowestGA = Integer.MAX_VALUE;
 		int totalGA = 0;
 		int[] minAssignment = new int[QAP.getN()];
@@ -68,8 +68,12 @@ public class Main {
 		System.out.println("");
 		System.out.println("Average Time: "+((end - start))/GARunSize);
 	
+	
 		QAP.showAssignments(minAssignment);
      
+		
+		
+
 	}
 
 

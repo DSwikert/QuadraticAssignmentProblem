@@ -296,7 +296,7 @@ public class QuadradicAssignment {
 	int[] aParents;
 	int[][] mChildren;
 	
-	
+//Initialize Genetic Algorithm members
 	private void initGeneticAlgorithm(int popSize, double percent)
 	{
 		iPopulationSize = popSize;
@@ -317,7 +317,6 @@ public class QuadradicAssignment {
 	{
 		initGeneticAlgorithm(popSize,percent);
 		setPopulation();
-		//System.out.println("Parent Count: "+iParentCount);
 		int minDis;
 		int maxDis;
 		for(int i = 0; i < generationCount;i++)
@@ -326,6 +325,7 @@ public class QuadradicAssignment {
 			mutation();
 			minDis = getDistance(mPopulation[0]);
 			maxDis = getDistance(mPopulation[iPopulationSize - 1]);
+			//Prints solution if at convergance or end of generation count
 			if(minDis == maxDis || i == (generationCount - 1))
 			{
 				System.out.println("Distance of lowest: "+minDis);
@@ -347,7 +347,7 @@ public class QuadradicAssignment {
 		}
 	}
 	
-	
+//Swaps two random points
 	private void mutation()
 	{
 		Random rand = new Random();
@@ -362,7 +362,7 @@ public class QuadradicAssignment {
 			
 		}
 	}
-	
+//Runs WOC with Genetic instance
 	public void geneticWOC()
 	{
 		int GACrowdSize = iPopulationSize - iParentCount;
@@ -375,12 +375,10 @@ public class QuadradicAssignment {
 		for(int j = 0; j < iN;j++)
 		{
 			mPopulation[GACrowdSize - 1][j] = GAWOC[j];
-			//System.out.print(GAWOC[j] + " ");
 		}
-		//System.out.println("");
 		
 	}
-	
+//Prints the population
 	private void printPop()
 	{
 		for(int j = 0; j < iPopulationSize; j++)
@@ -393,6 +391,7 @@ public class QuadradicAssignment {
 		}
 		System.out.println("");
 	}
+//Creates the children and add them to the population
 	private void reproduction()
 	{
 		for(int i = 0; i < iParentCount;i += 2)
@@ -403,6 +402,7 @@ public class QuadradicAssignment {
 			int[] child2 = new int[iN];
 			Random rand = new Random();
 			int index = rand.nextInt(iN);
+			//Fill with fist parent till the random index
 			for(int j = 0;j <= index;j++)
 			{	
 				child1[j] = mPopulation[aParents[i]][j];
@@ -412,10 +412,13 @@ public class QuadradicAssignment {
 			int firstIndex = index + 1;
 			int secondCount = index + 1;
 			int secondIndex = index + 1;
+			//Fill with second parents. 
 			while(firstCount != iN && firstIndex < ((iN*2) - 1))
 			{
+				//Fills in order of parent from random index, and then starts back at begining if array not filled
 				if(firstIndex < iN)
 				{
+					//Make sure not already in array
 					int f = mPopulation[aParents[i+1]][firstIndex];
 					if(isIn(child1,f) == false)
 					{
@@ -425,6 +428,7 @@ public class QuadradicAssignment {
 				}
 				else
 				{
+					//Make sure not already in array
 					int f = mPopulation[aParents[i+1]][firstIndex - iN];
 					if(isIn(child1,f) == false)
 					{
@@ -436,8 +440,10 @@ public class QuadradicAssignment {
 			}
 			while(secondCount != iN && secondIndex < ((iN*2) - 1))
 			{
+				//Fills in order of parent from random index, and then starts back at begining if array not filled
 				if(secondIndex < iN)
 				{
+					//Make sure not already in array
 					int f = mPopulation[aParents[i]][secondIndex];
 					if(isIn(child2,f) == false)
 					{
@@ -447,6 +453,7 @@ public class QuadradicAssignment {
 				}
 				else
 				{
+					//Make sure not already in array
 					int f = mPopulation[aParents[i]][secondIndex - iN];
 					if(isIn(child2,f) == false)
 					{
@@ -609,6 +616,8 @@ public class QuadradicAssignment {
 		
 		return setWisdom(crowd, crowdSize, wisdomChart, expertSize);
 	}
+	
+//Fills the WOC array
 	private int[] fillWOC(int[][] crowd,int[][] wisdomChart)
 	{
 		int[] WOC = new int[iN];
@@ -618,14 +627,15 @@ public class QuadradicAssignment {
 			int maxValue = 0;
 			for(int i = 0; i < iN;i++)
 			{
+				//Find max value
 				int tmp = wisdomChart[index][i];
 				if(tmp >= maxValue)
 				{
+					//Check to make sure its not already in the array
 					if(isIn(WOC,(i + 1)) == false)
 					{
 						maxValue = tmp;
 						maxInIndex = i;
-						//System.out.println("Index: "+index+" Max: "+maxInIndex);
 					}
 				}
 			}
@@ -636,7 +646,7 @@ public class QuadradicAssignment {
 		return WOC;
 	}
 	
-	
+//Sets the Wisdom matrix
 	private int[] setWisdom(int[][] crowd,int crowdSize, int[][] wisdomChart, int expertSize)
 	{	
 		for(int k = 0; k < expertSize;k++)
@@ -661,7 +671,7 @@ public class QuadradicAssignment {
 		return fillWOC(crowd, wisdomChart);
 	}
 	
-	
+//GUI for flow diagram	
 	public void showAssignments(int[] Assignments)
 	{
 		JFrame frame = new JFrame();
